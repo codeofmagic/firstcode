@@ -1,1 +1,7 @@
+println 'run settings\n'
+//println "Home Dir:" + gradle.gradleHomeDir
 include ':app', ':library'
+
+//println "In posdevice, gradle id is " + gradle.hashCode()
+//println "User Home Dir:" + gradle.gradleUserHomeDir
+//println "Parent: " + gradle.parent

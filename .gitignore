@@ -11,3 +11,10 @@
 /build
 /captures
 .externalNativeBuild
+/bin
+/buildSrc
+/docs
+/init.d
+/lib
+/media
+/src

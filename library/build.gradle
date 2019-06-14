@@ -1,12 +1,20 @@
+println 'run library\n'
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
+//apply plugin: 'com.github.dcendents.android-maven'
+//apply plugin: 'com.jfrog.bintray'
+
+android {
+    println "I am Closure."
+}
+
+android.buildTypes {
+    mt {
+        debuggable true
+    }
+}
 
 android {
     compileSdkVersion 28
-
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 28
@@ -19,33 +27,135 @@ android {
 
     buildTypes {
         release {
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        good {
+            gradle.gradleHomeDir
+            debuggable true
+        }
+        hello { println "buildTypes: hello" }
+        hi {
+            debuggable true
+            println "----------$minifyEnabled"
+        }
+    }
+
+    println "------------${buildTypes.size()}"
+    buildTypes.each {
+        println "${it.toString()}"
     }
 
 }
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-    }
-}
+//buildscript {
+//    repositories {
+//        jcenter()
+//    }
+//    dependencies {
+//        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+//    }
+//}
 
+String getSupport() {
+    gradle.gradleHomeDir
+    return 'com.android.support:appcompat-v7:28.0.0'
+}
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation getSupport()
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-ext {
+task copyFiles(type: Copy) {
+    into "$buildDir/output"
+    from configurations.compile
+    doFirst {
+        println ">> Compilation deps: ${configurations.compile.files}"
+    }
+}
+
+/***
+ * configurations: type is DefaultConfigurationContainer(implement ConfigurationContainer<Configuration>),
+ * it's subclass of java.util.Set
+ *
+ * haha: type is DefaultConfiguration
+ *
+ * description: create a DefaultConfiguration object and add to configurations
+ *
+ * process: first call project.configurations(Closure configureClosure) function, then run
+ * configurations.configure(configureClosure), then create a NamedDomainObjectContainerConfigureDelegate
+ * instance named 'delegate', then call the configureClosure.rehydrate(...) to represent the closure's owner
+ * by 'delegate'. last run the configureClosure.
+ */
+configurations {
+    haha
+}
+
+/***
+ * description: first find a DefaultConfiguration object named 'haha', then generate a Dependency object
+ * and add to the DefaultConfiguration::dependencies
+ *
+ * process: first call project.dependencies(Closure configureClosure) function, then run
+ * ConfigureUtil.configure(configureClosure, getDependencies()) (getDependencies() returns dependencyHandler)
+ * to assign dependencyHandler to configureClosure.delegate and new a ConfigureDelegate object
+ * to assign to configureClosure.owner. last run the configureClosure.
+ *
+ */
+dependencies {
+    haha 'junit:junit:4.12'
+}
+
+configurations.getByName('haha').dependencies.forEach {
+    println "----${it.name}----"
+}
+
+task hello {
+    doLast {
+        print "Hello,"
+    }
+}
+
+task intro {
+    dependsOn hello
+    doLast {
+        print "Gradle"
+    }
+}
+
+class Data {
+    public Data() {
+
+    }
+    def name = ""
+    def a = 0
+    def b = 0
+}
+
+class Test {
+    def a = 0
+    def b = 0
+}
+
+project.extensions.create("good", Data.class)
+
+good {
+    a = 1
+    b = 1
+}
+
+//list {
+//    k1 {
+//        a = 1
+//        b = 1
+//    }
+//}
+
+/*ext {
     bintrayRepo = 'first-code'
     bintrayName = 'first-code'
 
@@ -148,4 +258,4 @@ bintray {
             desc = libraryDescription
         }
     }
-}
+}*/
